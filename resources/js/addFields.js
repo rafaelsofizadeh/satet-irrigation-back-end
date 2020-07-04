@@ -5,6 +5,8 @@ const fieldsGeoJSON = {
       type: "Feature",
       properties: {
         name: "Cay #1",
+        area: "30 are",
+        "Soil type": "Silty soil",
       },
       geometry: {
         type: "Polygon",
@@ -21,7 +23,7 @@ const fieldsGeoJSON = {
     },
     {
       type: "Feature",
-      properties: { name: "Cay #2" },
+      properties: { name: "Cay #2", area: "42 are", "Soil type": "Silty soil" },
       geometry: {
         type: "Polygon",
         coordinates: [
@@ -37,7 +39,7 @@ const fieldsGeoJSON = {
     },
     {
       type: "Feature",
-      properties: { name: "Cay #3" },
+      properties: { name: "Cay #3", area: "34 are", "Soil type": "Silty soil" },
       geometry: {
         type: "Polygon",
         coordinates: [
@@ -53,7 +55,11 @@ const fieldsGeoJSON = {
     },
     {
       type: "Feature",
-      properties: { name: "Limon #1" },
+      properties: {
+        name: "Limon #1",
+        area: "60 are",
+        "Soil type": "Silty soil",
+      },
       geometry: {
         type: "Polygon",
         coordinates: [
@@ -69,3 +75,45 @@ const fieldsGeoJSON = {
     },
   ],
 };
+
+function capitalize(string) {
+  return string[0].toUpperCase() + string.slice(1);
+}
+
+function popup(info) {
+  return `<div class="field-popup">\
+            <ul>${Object.entries(info)
+              .map(
+                ([key, value]) =>
+                  `<li>\
+                    <span class="popup-prop-label">${capitalize(
+                      key
+                    )}:</span> ${value}\
+                </li>`
+              )
+              .join("")}\
+            </ul>\
+        </div>`;
+}
+
+L.geoJSON(fieldsGeoJSON, {
+  onEachFeature: (feature, layer) => {
+    // Labels on entities
+    L.marker(layer.getBounds().getCenter(), {
+      icon: L.divIcon({
+        className: "map-label",
+        html: feature.properties.name,
+        iconSize: [80, 20],
+      }),
+    }).addTo(map);
+
+    // Html .fields-cp <li>'s
+    $(".fields-cp").prepend(
+      `<li class="fields-cp-field">${feature.properties.name}</li>`
+    );
+
+    // Popup
+    layer.bindPopup(popup(feature.properties));
+    console.log(popup(feature.properties));
+  },
+}).addTo(map);

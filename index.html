@@ -101,6 +101,19 @@
       height: 30em;
       margin-top: 8em;
       border: 1px solid black;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map-wrapper-row {
+      display: flex;
+      align-items: stretch;
+      height: 100%;
+      flex-grow: 1;
+    }
+
+    .map-wrapper * {
+      margin: 0.25em 0;
     }
 
     .map-wrapper h1 {
@@ -109,9 +122,7 @@
     }
 
     #map {
-      width: 55%;
-      height: 32em;
-      margin: 0.5em 0;
+      flex-grow: 3;
     }
 
     .map-label {
@@ -119,21 +130,40 @@
       text-align: center;
       font-weight: bold;
     }
+
+    .fields-cp {
+      display: inline-block;
+      flex-grow: 1;
+      background-color: lightgray;
+      display: flex;
+      flex-direction: column;
+      padding: 0.2em;
+    }
+
+    .fields-cp li {
+      border: 1px solid black;
+      flex-grow: 1;
+      margin: 0.2em;
+      padding-left: 0.2em;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
   </style>
 
   <body>
     <div class="page-wrapper">
       <div class="map-wrapper centered">
         <h1>Your fields</h1>
-        <div id="map"></div>
+        <div class="map-wrapper-row">
+          <ul class="fields-cp">
+            <li class="fields-cp-button">Add a field</li>
+          </ul>
+          <div id="map"></div>
+        </div>
       </div>
     </div>
   </body>
-  <script
-    type="text/javascript"
-    language="javascript"
-    src="resources/misc/fields.js"
-  ></script>
   <script>
     // Initialization
     const mapId = "map";
@@ -142,18 +172,6 @@
     L.tileLayer("http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
       maxZoom: 19,
       subdomains: ["mt0", "mt1", "mt2", "mt3"],
-    }).addTo(map);
-
-    // Add existing fields
-    L.geoJSON(fieldsGeoJSON, {
-      onEachFeature: (feature, layer) =>
-        L.marker(layer.getBounds().getCenter(), {
-          icon: L.divIcon({
-            className: "map-label",
-            html: feature.properties.name,
-            iconSize: [80, 20],
-          }),
-        }).addTo(map),
     }).addTo(map);
 
     // Drawing
@@ -177,4 +195,9 @@
 
     map.on(L.Draw.Event.CREATED, (event) => drawnItems.addLayer(event.layer));
   </script>
+  <script
+    type="text/javascript"
+    language="javascript"
+    src="resources/js/addFields.js"
+  ></script>
 </html>
