@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="icon" type="image/png" href="img/favicon.ico" />
+    <link rel="icon" type="image/png" href="resources/img/favicon.ico" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
@@ -15,13 +15,20 @@
       integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
       crossorigin=""
     ></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
     <title>Home | Satet Irrigation</title>
 
     <div class="nav-wrapper">
       <nav class="navbar">
         <div class="navbar-inner-wrapper">
-          <img src="img/satet.png" alt="Satet Irrigation Logo" />
-          <a href="#">My Farms and Fields</a>
+          <img src="resources/img/satet.png" alt="Satet Irrigation Logo" />
+          <a href="#">My Fields</a>
         </div>
       </nav>
     </div>
@@ -30,13 +37,13 @@
   <style>
     @font-face {
       font-family: "Athiti";
-      src: url("fonts/athiti.woff") format("woff"),
-        url("fonts/athiti.woff2") format("woff2");
+      src: url("resources/fonts/athiti.woff") format("woff"),
+        url("resources/fonts/athiti.woff2") format("woff2");
     }
 
     @font-face {
       font-family: "SF";
-      src: url("fonts/SF.otg") format("otf");
+      src: url("resources/fonts/SF.otg") format("otf");
     }
 
     * {
@@ -102,29 +109,72 @@
     }
 
     #map {
-      width: 60%;
-      height: 30em;
+      width: 55%;
+      height: 32em;
       margin: 0.5em 0;
+    }
+
+    .map-label {
+      background-color: rgba(255, 255, 255, 0.5);
+      text-align: center;
+      font-weight: bold;
     }
   </style>
 
   <body>
     <div class="page-wrapper">
       <div class="map-wrapper centered">
-        <h1>Your farms and fields</h1>
+        <h1>Your fields</h1>
         <div id="map"></div>
       </div>
     </div>
   </body>
+  <script
+    type="text/javascript"
+    language="javascript"
+    src="resources/misc/fields.js"
+  ></script>
   <script>
-    window.onload = () => {
-      const mapId = "map";
-      const map = L.map(mapId).setView([38.7616283, 48.7934258], 13);
+    // Initialization
+    const mapId = "map";
+    const map = L.map(mapId).setView([38.6648, 48.8065], 13);
 
-      L.tileLayer("http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
-        maxZoom: 19,
-        subdomains: ["mt0", "mt1", "mt2", "mt3"],
-      }).addTo(map);
-    };
+    L.tileLayer("http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
+      maxZoom: 19,
+      subdomains: ["mt0", "mt1", "mt2", "mt3"],
+    }).addTo(map);
+
+    // Add existing fields
+    L.geoJSON(fieldsGeoJSON, {
+      onEachFeature: (feature, layer) =>
+        L.marker(layer.getBounds().getCenter(), {
+          icon: L.divIcon({
+            className: "map-label",
+            html: feature.properties.name,
+            iconSize: [80, 20],
+          }),
+        }).addTo(map),
+    }).addTo(map);
+
+    // Drawing
+    const drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    const drawControl = new L.Control.Draw({
+      edit: {
+        featureGroup: drawnItems,
+        poly: {
+          allowIntersection: false,
+        },
+      },
+      draw: {
+        polygon: {
+          allowIntersection: false,
+          showArea: true,
+        },
+      },
+    }).addTo(map);
+
+    map.on(L.Draw.Event.CREATED, (event) => drawnItems.addLayer(event.layer));
   </script>
 </html>
