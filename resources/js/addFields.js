@@ -4,9 +4,9 @@ const fieldsGeoJSON = {
     {
       type: "Feature",
       properties: {
-        name: "Cay #1",
-        area: "30 are",
-        "Soil type": "Silty soil",
+        "ad": "Cay #1",
+        "sahə": "0.03 hektar",
+        "torpaq növü": "Gilli torpaq",
       },
       geometry: {
         type: "Polygon",
@@ -23,7 +23,11 @@ const fieldsGeoJSON = {
     },
     {
       type: "Feature",
-      properties: { name: "Cay #2", area: "42 are", "Soil type": "Silty soil" },
+      properties: {
+        "ad": "Cay #3",
+        "sahə": "0.042 hektar",
+        "torpaq növü": "Gilli torpaq",
+      },
       geometry: {
         type: "Polygon",
         coordinates: [
@@ -39,7 +43,11 @@ const fieldsGeoJSON = {
     },
     {
       type: "Feature",
-      properties: { name: "Cay #3", area: "34 are", "Soil type": "Silty soil" },
+      properties: {
+        "ad": "Cay #2",
+        "sahə": "0.033 hektar",
+        "torpaq növü": "Gilli torpaq",
+      },
       geometry: {
         type: "Polygon",
         coordinates: [
@@ -56,9 +64,9 @@ const fieldsGeoJSON = {
     {
       type: "Feature",
       properties: {
-        name: "Limon #1",
-        area: "60 are",
-        "Soil type": "Silty soil",
+        "ad": "Limon #1",
+        "sahə": "0.06 hektar",
+        "torpaq növü": "Gilli torpaq",
       },
       geometry: {
         type: "Polygon",
@@ -83,15 +91,15 @@ function capitalize(string) {
 function popup(info) {
   return `<div class="field-popup">\
             <ul>${Object.entries(info)
-              .map(
-                ([key, value]) =>
-                  `<li>\
+      .map(
+        ([key, value]) =>
+          `<li>\
                     <span class="popup-prop-label">${capitalize(
-                      key
-                    )}:</span> ${value}\
+            key
+          )}:</span> ${value}\
                 </li>`
-              )
-              .join("")}\
+      )
+      .join("")}\
             </ul>\
         </div>`;
 }
@@ -102,18 +110,17 @@ L.geoJSON(fieldsGeoJSON, {
     L.marker(layer.getBounds().getCenter(), {
       icon: L.divIcon({
         className: "map-label",
-        html: feature.properties.name,
+        html: feature.properties.ad,
         iconSize: [80, 20],
       }),
     }).addTo(map);
 
     // Html .fields-cp <li>'s
     $(".fields-cp").prepend(
-      `<li class="fields-cp-field">${feature.properties.name}</li>`
+      `<li class="fields-cp-field">${feature.properties.ad}</li>`
     );
 
     // Popup
     layer.bindPopup(popup(feature.properties));
-    console.log(popup(feature.properties));
   },
 }).addTo(map);
